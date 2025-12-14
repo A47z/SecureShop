@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>重定向被阻止 - SecureShop</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            padding: 60px 40px;
+            border-radius: 10px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            text-align: center;
+            max-width: 500px;
+        }
+
+        .icon {
+            font-size: 80px;
+            margin-bottom: 20px;
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            color: #f5576c;
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 20px;
+        }
+
+        .error-box {
+            background: #fff3cd;
+            border: 1px solid #ffc107;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 20px 0;
+            text-align: left;
+        }
+
+        .attempted-url {
+            font-family: monospace;
+            background: #f0f0f0;
+            padding: 8px;
+            border-radius: 3px;
+            word-break: break-all;
+            margin-top: 10px;
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 12px 30px;
+            background: #667eea;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            font-weight: 600;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="icon">🚫</div>
+        <h1>重定向被阻止</h1>
+        <div class="subtitle">安全验证失败</div>
+
+        <div class="error-box">
+            <strong>错误信息:</strong>
+            <p th:text="${error}">不允许重定向到外部网站</p>
+
+            <div th:if="${attemptedUrl}" style="margin-top: 15px;">
+                <strong>尝试重定向到:</strong>
+                <div class="attempted-url" th:text="${attemptedUrl}">URL</div>
+            </div>
+        </div>
+
+        <p style="color: #666; margin: 20px 0;">
+            系统只允许重定向到白名单中的可信域名，<br>
+            以保护用户免受钓鱼攻击。
+        </p>
+
+        <a href="/redirect/demo" class="back-link">返回演示页面</a>
+    </div>
+</body>
+
+</html>

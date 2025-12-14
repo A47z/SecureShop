@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>重定向验证演示 - SecureShop</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f5f5f5;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            color: #666;
+            margin-bottom: 30px;
+        }
+
+        .alert {
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+
+        .alert-info {
+            background: #e7f3ff;
+            color: #0066cc;
+            border: 1px solid #b3d9ff;
+        }
+
+        .alert-warning {
+            background: #fff3cd;
+            color: #856404;
+            border: 1px solid #ffc107;
+        }
+
+        .test-section {
+            background: #f9f9f9;
+            padding: 20px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+
+        .test-section h3 {
+            margin-bottom: 15px;
+            color: #333;
+        }
+
+        .test-case {
+            background: white;
+            padding: 15px;
+            margin-bottom: 15px;
+            border-radius: 5px;
+            border-left: 3px solid #667eea;
+        }
+
+        .test-case h4 {
+            margin-bottom: 10px;
+            color: #667eea;
+        }
+
+        .test-url {
+            font-family: monospace;
+            background: #f0f0f0;
+            padding: 8px;
+            border-radius: 3px;
+            margin: 10px 0;
+            word-break: break-all;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        button,
+        .btn {
+            padding: 10px 20px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-danger {
+            background: #f5576c;
+        }
+
+        .whitelist {
+            background: #e7f3ff;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+
+        .whitelist ul {
+            margin: 10px 0 0 20px;
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-top: 20px;
+            color: #667eea;
+            text-decoration: none;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>↗️ 重定向验证演示</h1>
+        <p class="subtitle">实验步骤10: 避免不安全的重定向和转发</p>
+
+        <div class="alert alert-info">
+            <strong>✅ 安全保证：</strong> 系统会验证所有重定向URL，只允许重定向到白名单中的可信域名。
+        </div>
+
+        <!-- 白名单 -->
+        <div class="whitelist">
+            <h3>✅ 允许的域名白名单：</h3>
+            <ul>
+                <li>secureshop.com</li>
+                <li>www.secureshop.com</li>
+                <li>localhost</li>
+                <li>127.0.0.1</li>
+                <li>相对路径（如 /home, /products）</li>
+            </ul>
+        </div>
+
+        <!-- 测试用例 -->
+        <div class="test-section">
+            <h3>🧪 测试用例：</h3>
+
+            <!-- 测试1: 安全的内部重定向 -->
+            <div class="test-case">
+                <h4>✅ 测试1: 安全的内部重定向</h4>
+                <div class="test-url">/redirect/safe?url=/home</div>
+                <p>预期结果: 成功重定向到主页</p>
+                <div class="button-group">
+                    <a href="/redirect/safe?url=/home" class="btn">测试安全重定向</a>
+                </div>
+            </div>
+
+            <!-- 测试2: 白名单域名重定向 -->
+            <div class="test-case">
+                <h4>✅ 测试2: 白名单域名重定向</h4>
+                <div class="test-url">/redirect/safe?url=http://localhost:8080/home</div>
+                <p>预期结果: 允许，域名在白名单中</p>
+                <div class="button-group">
+                    <a href="/redirect/safe?url=http://localhost:8080/home" class="btn">测试白名单重定向</a>
+                </div>
+            </div>
+
+            <!-- 测试3: 外部恶意重定向 (被阻止) -->
+            <div class="test-case">
+                <h4>❌ 测试3: 外部恶意重定向 (应被阻止)</h4>
+                <div class="test-url">/redirect/safe?url=https://evil.com</div>
+                <p>预期结果: 被拒绝，显示"不允许重定向到外部网站"</p>
+                <div class="button-group">
+                    <a href="/redirect/safe?url=https://evil.com" class="btn btn-danger">测试恶意重定向</a>
+                </div>
+            </div>
+
+            <!-- 测试4: 协议不安全 (被阻止) -->
+            <div class="test-case">
+                <h4>❌ 测试4: 不安全的协议 (应被阻止)</h4>
+                <div class="test-url">/redirect/safe?url=javascript:alert('XSS')</div>
+                <p>预期结果: 被拒绝，协议不在允许列表</p>
+                <div class="button-group">
+                    <a href="/redirect/safe?url=javascript:alert('XSS')" class="btn btn-danger">测试协议攻击</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- 不安全重定向警告 -->
+        <div class="alert alert-warning">
+            <strong>⚠️ 开发者注意：</strong><br>
+            系统还包含一个 <code>/redirect/unsafe</code> 端点用于演示不安全的重定向。<br>
+            在生产环境中应该完全禁用此端点。
+        </div>
+
+        <!-- 原理说明 -->
+        <div style="background: #f9f9f9; padding: 20px; border-radius: 5px; margin-top: 30px;">
+            <h3>🔍 重定向验证原理：</h3>
+            <ol style="margin: 15px 0 0 20px; line-height: 1.8;">
+                <li>解析URL，提取协议、域名和路径</li>
+                <li>检查协议是否为 http 或 https</li>
+                <li>验证域名是否在白名单中</li>
+                <li>如果是相对路径，确保以 / 开头且不包含 //</li>
+                <li>所有验证通过才允许重定向</li>
+            </ol>
+        </div>
+
+        <a href="/home" class="back-link">← 返回主页</a>
+    </div>
+</body>
+
+</html>

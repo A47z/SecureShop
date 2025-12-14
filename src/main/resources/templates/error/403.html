@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>访问被拒绝 - SecureShop</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .error-container {
+            background: white;
+            padding: 60px 40px;
+            border-radius: 10px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            text-align: center;
+            max-width: 500px;
+        }
+
+        .error-icon {
+            font-size: 80px;
+            margin-bottom: 20px;
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 32px;
+        }
+
+        .error-code {
+            color: #f5576c;
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 20px;
+        }
+
+        .error-message {
+            color: #666;
+            margin-bottom: 10px;
+            font-size: 16px;
+        }
+
+        .error-id {
+            background-color: #f9f9f9;
+            padding: 10px;
+            border-radius: 5px;
+            margin: 20px 0;
+            font-family: monospace;
+            font-size: 14px;
+            color: #333;
+        }
+
+        .error-id strong {
+            color: #f5576c;
+        }
+
+        .back-button {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 12px 30px;
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            font-weight: 600;
+            transition: transform 0.2s;
+        }
+
+        .back-button:hover {
+            transform: translateY(-2px);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="error-container">
+        <div class="error-icon">🚫</div>
+        <h1>访问被拒绝</h1>
+        <div class="error-code">HTTP 403 Forbidden</div>
+
+        <!--
+            实验步骤4: IDOR 防护
+            实验步骤7: 功能级别访问控制
+            
+            不泄露详细信息，只显示通用错误消息
+        -->
+        <p class="error-message" th:text="${message}">您没有权限访问此资源</p>
+
+        <!--
+            实验步骤5: 自定义错误页面
+            
+            提供错误ID用于日志追踪，但不泄露技术细节
+        -->
+        <div class="error-id" th:if="${errorId}">
+            <strong>错误ID:</strong> <span th:text="${errorId}">xxx-xxx-xxx</span><br>
+            <small>如需技术支持，请提供此错误ID</small>
+        </div>
+
+        <a th:href="@{/}" class="back-button">返回首页</a>
+    </div>
+</body>
+
+</html>

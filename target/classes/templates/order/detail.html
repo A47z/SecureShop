@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>订单详情 - SecureShop</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f5f5f5;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .order-info {
+            background: #f9f9f9;
+            padding: 20px;
+            border-radius: 5px;
+            margin-bottom: 30px;
+        }
+
+        .info-row {
+            display: flex;
+            margin-bottom: 10px;
+        }
+
+        .info-label {
+            font-weight: 600;
+            color: #666;
+            width: 120px;
+        }
+
+        .info-value {
+            color: #333;
+        }
+
+        .status-badge {
+            padding: 5px 15px;
+            border-radius: 3px;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .status-pending {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .status-paid {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .status-shipped {
+            background: #cce5ff;
+            color: #004085;
+        }
+
+        .status-completed {
+            background: #d1ecf1;
+            color: #0c5460;
+        }
+
+        .items-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+
+        .items-table th {
+            background: #667eea;
+            color: white;
+            padding: 12px;
+            text-align: left;
+        }
+
+        .items-table td {
+            padding: 12px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .total-row {
+            font-weight: 600;
+            font-size: 18px;
+            color: #667eea;
+            text-align: right;
+            padding: 20px 0;
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-top: 20px;
+            color: #667eea;
+            text-decoration: none;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>📦 订单详情</h1>
+
+        <div class="order-info" th:if="${order}">
+            <div class="info-row">
+                <div class="info-label">订单号:</div>
+                <div class="info-value">#<span th:text="${order.id}">1</span></div>
+            </div>
+
+            <div class="info-row">
+                <div class="info-label">订单状态:</div>
+                <div class="info-value">
+                    <span class="status-badge"
+                        th:classappend="${order.status == T(com.secureshop.entity.OrderStatus).PENDING} ? 'status-pending' : 
+                                         (${order.status == T(com.secureshop.entity.OrderStatus).PAID} ? 'status-paid' : 
+                                         (${order.status == T(com.secureshop.entity.OrderStatus).SHIPPED} ? 'status-shipped' : 'status-completed'))">
+                        <span th:text="${order.status}">PENDING</span>
+                    </span>
+                </div>
+            </div>
+
+            <div class="info-row">
+                <div class="info-label">收货人:</div>
+                <div class="info-value" th:text="${order.receiverName}">姓名</div>
+            </div>
+
+            <div class="info-row">
+                <div class="info-label">联系电话:</div>
+                <div class="info-value" th:text="${order.receiverPhone}">电话</div>
+            </div>
+
+            <div class="info-row">
+                <div class="info-label">收货地址:</div>
+                <div class="info-value" th:text="${order.shippingAddress}">地址</div>
+            </div>
+
+            <div class="info-row">
+                <div class="info-label">下单时间:</div>
+                <div class="info-value" th:text="${#temporals.format(order.createdAt, 'yyyy-MM-dd HH:mm:ss')}">时间</div>
+            </div>
+        </div>
+
+        <h3>订单商品</h3>
+        <table class="items-table">
+            <thead>
+                <tr>
+                    <th>商品名称</th>
+                    <th>单价</th>
+                    <th>数量</th>
+                    <th>小计</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="item : ${order.orderItems}">
+                    <td th:text="${item.productNameAtPurchase}">商品名称</td>
+                    <td>¥<span th:text="${item.priceAtPurchase}">0.00</span></td>
+                    <td th:text="${item.quantity}">1</td>
+                    <td>¥<span th:text="${item.subtotal}">0.00</span></td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div class="total-row">
+            订单总计: ¥<span th:text="${order.totalAmount}">0.00</span>
+        </div>
+
+        <a href="/orders" class="back-link">← 返回订单列表</a>
+    </div>
+</body>
+
+</html>

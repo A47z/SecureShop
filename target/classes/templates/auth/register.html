@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>注册 - SecureShop</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .register-container {
+            background: white;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            width: 100%;
+            max-width: 500px;
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 28px;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 14px;
+        }
+
+        .alert {
+            padding: 12px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+
+        .alert-danger {
+            background-color: #fee;
+            color: #c33;
+            border: 1px solid #fcc;
+        }
+
+        .alert-info {
+            background-color: #e7f3ff;
+            color: #0066cc;
+            border: 1px solid #b3d9ff;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            color: #333;
+            font-weight: 500;
+        }
+
+        input[type="text"],
+        input[type="email"],
+        input[type="password"],
+        input[type="tel"] {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 14px;
+            transition: border-color 0.3s;
+        }
+
+        input[type="text"]:focus,
+        input[type="email"]:focus,
+        input[type="password"]:focus,
+        input[type="tel"]:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .error-message {
+            color: #c33;
+            font-size: 12px;
+            margin-top: 5px;
+        }
+
+        .password-requirements {
+            font-size: 12px;
+            color: #666;
+            margin-top: 5px;
+            padding: 10px;
+            background-color: #f9f9f9;
+            border-radius: 5px;
+        }
+
+        .password-requirements ul {
+            margin: 5px 0 0 20px;
+        }
+
+        .password-requirements li {
+            margin: 3px 0;
+        }
+
+        button {
+            width: 100%;
+            padding: 12px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+        }
+
+        .login-link {
+            text-align: center;
+            margin-top: 20px;
+            color: #666;
+        }
+
+        .login-link a {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .login-link a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="register-container">
+        <h1>📝 用户注册</h1>
+        <p class="subtitle">创建您的 SecureShop 账户</p>
+
+        <!-- 错误消息 -->
+        <div th:if="${error}" class="alert alert-danger">
+            <span th:text="${error}">注册失败</span>
+        </div>
+
+        <!--
+            注册表单
+            
+            实验步骤1: 输入校验
+            - 使用 @Valid 注解进行服务端验证
+            - 使用正则表达式验证邮箱格式
+            - 使用 @StrongPassword 验证密码强度
+            
+            实验步骤8: CSRF 防护
+            - Thymeleaf 自动添加 CSRF token
+        -->
+        <form th:action="@{/register}" th:object="${registrationDto}" method="post">
+
+            <!-- 用户名 -->
+            <div class="form-group">
+                <label for="username">用户名 *</label>
+                <input type="text" id="username" th:field="*{username}" placeholder="3-50个字符，只能包含字母、数字、下划线和横线" required>
+                <div class="error-message" th:if="${#fields.hasErrors('username')}" th:errors="*{username}">
+                    用户名错误
+                </div>
+            </div>
+
+            <!-- 邮箱 - 实验步骤1: 正则表达式验证 -->
+            <div class="form-group">
+                <label for="email">邮箱 *</label>
+                <input type="email" id="email" th:field="*{email}" placeholder="your.email@example.com" required>
+                <div class="error-message" th:if="${#fields.hasErrors('email')}" th:errors="*{email}">
+                    邮箱格式错误
+                </div>
+            </div>
+
+            <!-- 密码 - 实验步骤2: 强密码策略 -->
+            <div class="form-group">
+                <label for="password">密码 *</label>
+                <input type="password" id="password" th:field="*{password}" placeholder="请输入密码" required>
+                <div class="error-message" th:if="${#fields.hasErrors('password')}" th:errors="*{password}">
+                    密码强度不足
+                </div>
+                <div class="password-requirements">
+                    <strong>密码要求：</strong>
+                    <ul>
+                        <li>至少 10 个字符</li>
+                        <li>包含大写字母 (A-Z)</li>
+                        <li>包含小写字母 (a-z)</li>
+                        <li>包含数字 (0-9)</li>
+                        <li>包含特殊字符 (!@#$%^&*)</li>
+                        <li>不能是常见密码</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- 确认密码 -->
+            <div class="form-group">
+                <label for="confirmPassword">确认密码 *</label>
+                <input type="password" id="confirmPassword" th:field="*{confirmPassword}" placeholder="请再次输入密码"
+                    required>
+                <div class="error-message" th:if="${#fields.hasErrors('confirmPassword')}"
+                    th:errors="*{confirmPassword}">
+                    两次密码不一致
+                </div>
+            </div>
+
+            <!-- 真实姓名 (可选) -->
+            <div class="form-group">
+                <label for="fullName">真实姓名</label>
+                <input type="text" id="fullName" th:field="*{fullName}" placeholder="可选">
+            </div>
+
+            <!-- 电话号码 (可选) -->
+            <div class="form-group">
+                <label for="phoneNumber">手机号</label>
+                <input type="tel" id="phoneNumber" th:field="*{phoneNumber}" placeholder="可选">
+                <div class="error-message" th:if="${#fields.hasErrors('phoneNumber')}" th:errors="*{phoneNumber}">
+                    手机号格式错误
+                </div>
+            </div>
+
+            <button type="submit">注册</button>
+        </form>
+
+        <div class="login-link">
+            已有账户？ <a th:href="@{/login}">立即登录</a>
+        </div>
+    </div>
+</body>
+
+</html>

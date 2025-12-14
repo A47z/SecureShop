@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SecureShop - OWASP 安全演示系统</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+
+        .header {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .username {
+            color: #333;
+            font-weight: 600;
+        }
+
+        .logout-btn {
+            padding: 8px 20px;
+            background: #f5576c;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            text-decoration: none;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+
+        .welcome {
+            background: white;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .welcome h1 {
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .welcome p {
+            color: #666;
+            font-size: 16px;
+        }
+
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .feature-card {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .feature-icon {
+            font-size: 48px;
+            margin-bottom: 15px;
+        }
+
+        .feature-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .feature-desc {
+            color: #666;
+            font-size: 14px;
+            margin-bottom: 15px;
+            line-height: 1.6;
+        }
+
+        .feature-link {
+            display: inline-block;
+            padding: 10px 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            font-weight: 600;
+            transition: opacity 0.3s;
+        }
+
+        .feature-link:hover {
+            opacity: 0.9;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 4px 8px;
+            background: #ffc107;
+            color: #333;
+            border-radius: 3px;
+            font-size: 12px;
+            font-weight: 600;
+            margin-left: 8px;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- 页面头部 -->
+    <div class="header">
+        <div class="header-content">
+            <div class="logo">🔐 SecureShop</div>
+            <div class="user-info" sec:authorize="isAuthenticated()">
+                <span class="username">
+                    欢迎，<span sec:authentication="name">用户</span>
+                </span>
+                <form th:action="@{/logout}" method="post" style="margin: 0;">
+                    <button type="submit" class="logout-btn">登出</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- 主要内容 -->
+    <div class="container">
+        <!-- 欢迎信息 -->
+        <div class="welcome">
+            <h1>🎯 OWASP Top 10 安全演示系统</h1>
+            <p>本系统严格遵循 OWASP Top 10 安全要求构建，演示各种安全防护措施</p>
+        </div>
+
+        <!-- 功能卡片 -->
+        <div class="features">
+            <!-- SQL 注入预防 -->
+            <div class="feature-card">
+                <div class="feature-icon">🛡️</div>
+                <div class="feature-title">
+                    SQL 注入预防
+                </div>
+                <div class="feature-desc">
+                    使用 JPA 参数化查询，防止 SQL 注入攻击。尝试在商品搜索中输入恶意 SQL 语句。
+                </div>
+                <a href="/products/search" class="feature-link">测试商品搜索</a>
+            </div>
+
+            <!-- XSS 防护 -->
+            <div class="feature-card">
+                <div class="feature-icon">💬</div>
+                <div class="feature-title">
+                    XSS 防护
+                </div>
+                <div class="feature-desc">
+                    使用 Thymeleaf th:text 自动转义 HTML。尝试在评论中输入 &lt;script&gt; 标签。
+                </div>
+                <a href="/comments" class="feature-link">测试留言板</a>
+            </div>
+
+            <!-- IDOR 防护 -->
+            <div class="feature-card">
+                <div class="feature-icon">🔒</div>
+                <div class="feature-title">
+                    IDOR 防护
+                </div>
+                <div class="feature-desc">
+                    验证订单所有权，防止越权访问。尝试访问其他用户的订单。
+                </div>
+                <a href="/orders" class="feature-link">查看我的订单</a>
+            </div>
+
+            <!-- 强密码策略 -->
+            <div class="feature-card">
+                <div class="feature-icon">🔑</div>
+                <div class="feature-title">
+                    强密码策略
+                </div>
+                <div class="feature-desc">
+                    要求10字符+大小写+数字+特殊字符，禁止常见密码。使用 BCrypt 加密存储。
+                </div>
+                <a href="/register" class="feature-link">测试注册验证</a>
+            </div>
+
+            <!-- CSRF 防护 -->
+            <div class="feature-card">
+                <div class="feature-icon">🛡️</div>
+                <div class="feature-title">
+                    CSRF 防护
+                </div>
+                <div class="feature-desc">
+                    所有表单自动包含 CSRF Token，防止跨站请求伪造攻击。
+                </div>
+                <a href="/comments" class="feature-link">查看表单示例</a>
+            </div>
+
+            <!-- 安全错误处理 -->
+            <div class="feature-card">
+                <div class="feature-icon">⚠️</div>
+                <div class="feature-title">
+                    安全错误处理
+                </div>
+                <div class="feature-desc">
+                    不泄露堆栈跟踪，生成唯一错误 ID。详细错误只记录在服务器日志。
+                </div>
+                <a href="/orders/99999" class="feature-link">触发 500 错误</a>
+            </div>
+
+            <!-- 敏感数据保护 -->
+            <div class="feature-card">
+                <div class="feature-icon">🔐</div>
+                <div class="feature-title">
+                    敏感数据保护
+                </div>
+                <div class="feature-desc">
+                    使用 BCrypt 加密存储密码。数据库中只存储哈希值，永不存储明文密码。
+                </div>
+                <a href="/register" class="feature-link">查看密码加密</a>
+            </div>
+
+            <!-- 功能级别访问控制 -->
+            <div class="feature-card">
+                <div class="feature-icon">👮</div>
+                <div class="feature-title">
+                    访问控制 (RBAC)
+                </div>
+                <div class="feature-desc">
+                    基于角色的访问控制。/admin/** 路径只允许 ADMIN 角色访问。
+                </div>
+                <a href="/admin/users" class="feature-link">测试管理员权限</a>
+            </div>
+
+            <!-- 安全配置 -->
+            <div class="feature-card">
+                <div class="feature-icon">⚙️</div>
+                <div class="feature-title">
+                    安全响应头
+                </div>
+                <div class="feature-desc">
+                    启用 X-Frame-Options、HSTS、CSP 等安全响应头，防止点击劫持和XSS。
+                </div>
+                <span class="feature-link" style="cursor: text; opacity: 0.7;">
+                    查看浏览器开发者工具
+                </span>
+            </div>
+
+            <!-- 依赖安全 -->
+            <div class="feature-card">
+                <div class="feature-icon">📦</div>
+                <div class="feature-title">
+                    依赖安全审计
+                </div>
+                <div class="feature-desc">
+                    定期更新依赖，检查已知漏洞。使用 Maven 依赖检查工具。
+                </div>
+                <span class="feature-link" style="cursor: text; opacity: 0.7;">
+                    mvn dependency:tree
+                </span>
+            </div>
+
+            <!-- 重定向验证 -->
+            <div class="feature-card">
+                <div class="feature-icon">↗️</div>
+                <div class="feature-title">
+                    重定向验证
+                </div>
+                <div class="feature-desc">
+                    验证重定向URL，防止开放重定向漏洞。确保只重定向到可信域名。
+                </div>
+                <a href="/redirect/demo" class="feature-link">测试重定向验证</a>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

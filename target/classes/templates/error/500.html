@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>系统错误 - SecureShop</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .error-container {
+            background: white;
+            padding: 60px 40px;
+            border-radius: 10px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            text-align: center;
+            max-width: 500px;
+        }
+
+        .error-icon {
+            font-size: 80px;
+            margin-bottom: 20px;
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 32px;
+        }
+
+        .error-code {
+            color: #fa709a;
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 20px;
+        }
+
+        .error-message {
+            color: #666;
+            margin-bottom: 20px;
+            font-size: 16px;
+            line-height: 1.6;
+        }
+
+        .error-id-box {
+            background-color: #fff3cd;
+            border: 1px solid #ffc107;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 20px 0;
+        }
+
+        .error-id-box strong {
+            color: #856404;
+            display: block;
+            margin-bottom: 10px;
+        }
+
+        .error-id {
+            font-family: monospace;
+            font-size: 14px;
+            color: #333;
+            background-color: white;
+            padding: 8px;
+            border-radius: 3px;
+            word-break: break-all;
+        }
+
+        .timestamp {
+            font-size: 12px;
+            color: #999;
+            margin-top: 10px;
+        }
+
+        .back-button {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 12px 30px;
+            background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            font-weight: 600;
+            transition: transform 0.2s;
+        }
+
+        .back-button:hover {
+            transform: translateY(-2px);
+        }
+
+        .important-note {
+            font-size: 12px;
+            color: #666;
+            margin-top: 15px;
+            font-style: italic;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="error-container">
+        <div class="error-icon">⚠️</div>
+        <h1>系统错误</h1>
+        <div class="error-code">HTTP 500 Internal Server Error</div>
+
+        <!--
+            实验步骤5: 自定义错误页面
+            
+            ❌ 不要这样做：
+            - 不显示异常类型 (NullPointerException)
+            - 不显示堆栈跟踪
+            - 不显示代码文件名和行号
+            - 不显示使用的框架和库
+            
+            ✅ 只显示：
+            - 通用的错误信息
+            - 唯一的错误ID（用于日志追踪）
+            - 友好的用户提示
+        -->
+        <p class="error-message">
+            抱歉，系统遇到了一个错误。<br>
+            我们的技术团队已经收到通知，正在处理此问题。
+        </p>
+
+        <!--
+            实验步骤5: 创建带有简单 ID 和错误描述的索引
+            
+            技术支持人员可以通过此错误ID在日志中查找详细的错误信息：
+            - 完整的异常堆栈
+            - 请求路径
+            - 用户信息
+            - 时间戳
+        -->
+        <div class="error-id-box">
+            <strong>📋 错误追踪信息</strong>
+            <div class="error-id">
+                错误ID: <span th:text="${errorId}">xxx-xxx-xxx</span>
+            </div>
+            <div class="timestamp" th:if="${timestamp}">
+                发生时间: <span th:text="${#temporals.format(timestamp, 'yyyy-MM-dd HH:mm:ss')}"></span>
+            </div>
+        </div>
+
+        <p class="important-note">
+            如果问题持续存在，请联系技术支持并提供上述错误ID
+        </p>
+
+        <a th:href="@{/}" class="back-button">返回首页</a>
+    </div>
+</body>
+
+</html>

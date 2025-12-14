@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>登录 - SecureShop</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .login-container {
+            background: white;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            width: 100%;
+            max-width: 400px;
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 28px;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 14px;
+        }
+
+        .alert {
+            padding: 12px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+
+        .alert-danger {
+            background-color: #fee;
+            color: #c33;
+            border: 1px solid #fcc;
+        }
+
+        .alert-success {
+            background-color: #efe;
+            color: #3c3;
+            border: 1px solid #cfc;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            color: #333;
+            font-weight: 500;
+        }
+
+        input[type="text"],
+        input[type="password"] {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 14px;
+            transition: border-color 0.3s;
+        }
+
+        input[type="text"]:focus,
+        input[type="password"]:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .checkbox-group input[type="checkbox"] {
+            margin-right: 8px;
+        }
+
+        button {
+            width: 100%;
+            padding: 12px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+        }
+
+        .register-link {
+            text-align: center;
+            margin-top: 20px;
+            color: #666;
+        }
+
+        .register-link a {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .register-link a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="login-container">
+        <h1>🔐 SecureShop</h1>
+        <p class="subtitle">基于 OWASP Top 10 的安全电商系统</p>
+
+        <!-- 错误消息 - 实验步骤2: 使用泛化错误信息 -->
+        <div th:if="${error}" class="alert alert-danger">
+            <span th:text="${error}">用户名或密码无效</span>
+        </div>
+
+        <!-- 成功消息 -->
+        <div th:if="${message}" class="alert alert-success">
+            <span th:text="${message}">操作成功</span>
+        </div>
+
+        <div th:if="${param.logout}" class="alert alert-success">
+            您已成功登出
+        </div>
+
+        <div th:if="${param.success}" class="alert alert-success">
+            登录成功！欢迎回来。
+        </div>
+
+        <!-- 
+            登录表单
+            
+            实验步骤8: CSRF 防护
+            - Spring Security 会自动在表单中注入 CSRF token
+            - Thymeleaf 会自动添加隐藏字段: _csrf
+        -->
+        <form th:action="@{/login}" method="post">
+            <div class="form-group">
+                <label for="username">用户名或邮箱</label>
+                <input type="text" id="username" name="username" placeholder="请输入用户名或邮箱" required autofocus>
+            </div>
+
+            <div class="form-group">
+                <label for="password">密码</label>
+                <input type="password" id="password" name="password" placeholder="请输入密码" required>
+            </div>
+
+            <div class="checkbox-group">
+                <input type="checkbox" id="remember-me" name="remember-me">
+                <label for="remember-me" style="margin-bottom: 0;">记住我 (7天)</label>
+            </div>
+
+            <button type="submit">登录</button>
+        </form>
+
+        <div class="register-link">
+            还没有账户？ <a th:href="@{/register}">立即注册</a>
+        </div>
+    </div>
+</body>
+
+</html>
