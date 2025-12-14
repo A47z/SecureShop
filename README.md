@@ -78,7 +78,7 @@ SecureShop 是一个教育性质的电商安全演示系统，旨在帮助开发
 #### 1. 克隆项目
 
 ```bash
-git clone https://github.com/yourusername/SecureShop.git
+git clone https://github.com/A47z/SecureShop.git
 cd SecureShop
 ```
 
@@ -199,7 +199,6 @@ mvn spring-boot:run
 ❌ password123          (缺少大写和特殊字符)
 ❌ Pass@123             (少于10字符)
 ❌ Password123          (缺少特殊字符)
-✅ A47zest4224@         (符合要求)
 ✅ MyP@ssw0rd2024!      (符合要求)
 ```
 
